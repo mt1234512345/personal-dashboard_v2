@@ -1,0 +1,67 @@
+:root {
+  /* CDS design tokens */
+  --surface-0: #f5f6f8; /* page background */
+  --surface-1: #ffffff; /* slightly raised (header, modal) */
+  --surface-2: #ffffff; /* cards, containers */
+
+  --text-primary: #1a1d23;
+  --text-secondary: #5b6270;
+  --text-muted: #9aa1ac;
+  --text-accent: #2f6fed;
+
+  --border: #e3e5ea;
+  --fill-accent: #2f6fed;
+  --on-accent: #ffffff;
+  --bg-accent: #e8f0fe;
+
+  --danger: #d64545;
+  --bg-danger: #fbeaea;
+
+  --success-bg: #e6f4ea;
+  --success-text: #1e7b34;
+
+  --warn-bg: #fff4e0;
+  --warn-text: #8a5b00;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100%;
+}
+
+a {
+  color: var(--text-accent);
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 1rem;
+}
