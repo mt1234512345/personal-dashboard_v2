@@ -1,19 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageLayout from '../components/layout/PageLayout';
+import NewTaskForm from '../components/forms/NewTaskForm';
 import useDailyGoals from '../hooks/useDailyGoals';
 import useTasks from '../hooks/useTasks';
+import useProjects from '../hooks/useProjects';
 import { formatReadTime } from '../utils/formatter';
 
 export function DailyIntakePage() {
   const navigate = useNavigate();
   const { morning, loading, error, saveMorning } = useDailyGoals();
-  const { tasks, loading: tasksLoading, error: tasksError } = useTasks({ due_date: 'Today' });
+  const { tasks, loading: tasksLoading, error: tasksError, createTask } = useTasks({
+    due_date: 'Today',
+  });
+  const { projects } = useProjects();
 
   const [goalFields, setGoalFields] = useState(['', '', '']);
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+
+  const visibleTasks = tasks.filter((task) => task.status !== 'Completed');
 
   useEffect(() => {
     if (!morning?.goals) {
@@ -123,16 +131,25 @@ export function DailyIntakePage() {
           </section>
 
           <section className="card">
-            <h2 className="card-title">Tasks for today</h2>
+            <div className="card-header-row">
+              <h2 className="card-title">Tasks for today</h2>
+              <button
+                type="button"
+                className="btn btn-secondary btn-small"
+                onClick={() => setTaskModalOpen(true)}
+              >
+                + New task
+              </button>
+            </div>
             {tasksLoading ? (
               <p className="muted">Loading tasks…</p>
             ) : tasksError ? (
               <p className="form-error">{tasksError}</p>
-            ) : tasks.length === 0 ? (
-              <p className="empty-state">No tasks scheduled for today yet.</p>
+            ) : visibleTasks.length === 0 ? (
+              <p className="empty-state">No active tasks scheduled for today yet.</p>
             ) : (
               <div className="task-checklist">
-                {tasks.map((task) => (
+                {visibleTasks.map((task) => (
                   <label key={task.id} className="task-checklist-item">
                     <input
                       type="checkbox"
@@ -158,6 +175,19 @@ export function DailyIntakePage() {
           </div>
         </form>
       )}
+
+      <NewTaskForm
+        isOpen={taskModalOpen}
+        onClose={() => setTaskModalOpen(false)}
+        onSave={async (payload) => {
+          const task = await createTask(payload);
+          if (task && task.id) {
+            setSelectedTaskIds((current) => [...new Set([...current, task.id])]);
+          }
+          return task;
+        }}
+        projects={projects}
+      />
     </PageLayout>
   );
 }
