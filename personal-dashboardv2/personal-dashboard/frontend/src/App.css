@@ -299,6 +299,33 @@
 .home-actions {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+.daily-intake-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.task-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+}
+
+.task-checklist-item input {
+  margin: 0;
 }
 
 /* ==========================================================================
@@ -388,10 +415,33 @@
   margin: 0;
 }
 
+.daily-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.daily-quote {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
 .reading-card {
   background: var(--surface-0);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
+}
+
+.daily-reading-card {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.daily-reading-card:hover {
+  border-color: var(--text-accent);
 }
 
 .reading-card-title {

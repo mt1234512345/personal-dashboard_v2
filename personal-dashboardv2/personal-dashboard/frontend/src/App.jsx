@@ -9,6 +9,7 @@ import ContentQueuePage from './pages/ContentQueuePage';
 import ProjectsListPage from './pages/ProjectsListPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import WeeklyPlanningPage from './pages/WeeklyPlanningPage';
+import DailyIntakePage from './pages/DailyIntakePage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export function App() {
@@ -63,6 +64,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <WeeklyPlanningPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/daily-intake"
+            element={
+              <PrivateRoute>
+                <DailyIntakePage />
               </PrivateRoute>
             }
           />

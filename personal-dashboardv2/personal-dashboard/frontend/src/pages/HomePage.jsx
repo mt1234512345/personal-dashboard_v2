@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PageLayout from '../components/layout/PageLayout';
 import GoalDisplay from '../components/GoalDisplay';
 import TaskItem from '../components/TaskItem';
@@ -13,6 +13,7 @@ import { todayLabel } from '../utils/dateUtils';
 import { formatReadTime } from '../utils/formatter';
 
 export function HomePage() {
+  const navigate = useNavigate();
   const { morning, loading: goalsLoading, error: goalsError } = useDailyGoals();
   const { tasks, loading: tasksLoading, error: tasksError, createTask, toggleTask } = useTasks({
     due_date: 'Today',
@@ -32,6 +33,46 @@ export function HomePage() {
 
   return (
     <PageLayout title="Today" subtitle={todayLabel()}>
+      {morning?.quote && (
+        <section className="card daily-feature-card">
+          <h2 className="card-title">Today’s quote</h2>
+          <p className="day-quote daily-quote">“{morning.quote}”</p>
+        </section>
+      )}
+
+      {morning?.reading && (
+        <section className="card daily-feature-card">
+          <h2 className="card-title">Today’s reading</h2>
+          <div
+            className="content-item daily-reading-card"
+            onClick={() =>
+              morning.reading.url &&
+              window.open(morning.reading.url, '_blank', 'noopener,noreferrer')
+            }
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                if (morning.reading.url) {
+                  window.open(morning.reading.url, '_blank', 'noopener,noreferrer');
+                }
+              }
+            }}
+          >
+            <span className="status-dot dot-muted" aria-hidden="true" />
+            <div className="content-item-body">
+              <div className="content-item-title">{morning.reading.title}</div>
+              <div className="content-item-meta">
+                {[morning.reading.source, formatReadTime(morning.reading.read_time)]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="card">
         <h2 className="card-title">Today's goals</h2>
         {goalsLoading ? (
@@ -104,6 +145,9 @@ export function HomePage() {
       </section>
 
       <div className="home-actions">
+        <button type="button" className="btn btn-primary" onClick={() => navigate('/daily-intake')}>
+          Fill daily form
+        </button>
         <button type="button" className="btn btn-primary" onClick={() => setTaskModalOpen(true)}>
           + Add task
         </button>
