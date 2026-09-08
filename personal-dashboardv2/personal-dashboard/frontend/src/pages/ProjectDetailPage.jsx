@@ -10,6 +10,7 @@ import useTasks from '../hooks/useTasks';
 import useContent from '../hooks/useContent';
 import useProjects from '../hooks/useProjects';
 import { projectsService } from '../services/projectsService';
+import { PROJECT_STATUSES } from '../utils/constants';
 import { projectStatusClass } from '../utils/formatter';
 
 export function ProjectDetailPage() {
@@ -19,6 +20,8 @@ export function ProjectDetailPage() {
   const [project, setProject] = useState(null);
   const [projectLoading, setProjectLoading] = useState(true);
   const [projectError, setProjectError] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [statusError, setStatusError] = useState(null);
 
   const {
     tasks,
@@ -61,6 +64,26 @@ export function ProjectDetailPage() {
       cancelled = true;
     };
   }, [id]);
+
+  async function handleStatusChange(nextStatus) {
+    if (!nextStatus || nextStatus === project.status) return;
+
+    setUpdatingStatus(true);
+    setStatusError(null);
+
+    try {
+      const updatedProject = await projectsService.update(id, { status: nextStatus });
+      setProject((current) => ({
+        ...current,
+        ...updatedProject,
+        status: updatedProject.status || nextStatus,
+      }));
+    } catch (err) {
+      setStatusError(err.message || 'Could not update project status.');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  }
 
   function openCreateTaskModal() {
     setEditingTask(null);
@@ -114,6 +137,26 @@ export function ProjectDetailPage() {
           <p>{project.description}</p>
         </section>
       )}
+
+      <section className="card">
+        <div className="form-field">
+          <span className="form-label">Status</span>
+          <div className="button-group">
+            {PROJECT_STATUSES.map((status) => (
+              <button
+                key={status}
+                type="button"
+                className={`pill-button ${project.status === status ? 'pill-button-active' : ''}`}
+                onClick={() => handleStatusChange(status)}
+                disabled={updatingStatus}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+          {statusError && <p className="form-error">{statusError}</p>}
+        </div>
+      </section>
 
       <section className="card">
         <div className="card-header-row">
